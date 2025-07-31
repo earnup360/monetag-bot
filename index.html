@@ -1,539 +1,644 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Round Corner Image Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Premium Earn Money - Watch Ads</title>
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script src='//libtl.com/sdk.js' data-zone='9472256' data-sdk='show_9472256'></script>
+    
     <style>
+        /* আপনার দেওয়া সম্পূর্ণ CSS কোড এখানে থাকবে */
+        /* কোনো পরিবর্তন করা হয়নি */
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --text-color: #333;
-            --bg-color: #f8f9fa;
-            --card-bg: #fff;
-            --border-color: #e0e0e0;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --radius: 12px;
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --success: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --info: #0984e3;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --card-bg: #222f3e;
+            --text: #dfe6e9;
+            --text-muted: #b2bec3;
+            --elevation-1: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --elevation-2: 0 10px 20px rgba(0, 0, 0, 0.2);
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
         }
-
-        [data-theme="dark"] {
-            --primary-color: #4895ef;
-            --secondary-color: #4361ee;
-            --text-color: #f8f9fa;
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --border-color: #333;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Poppins', sans-serif;
         }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--dark);
+            color: var(--text);
             line-height: 1.6;
-            padding: 20px;
             min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .description {
-            color: var(--text-color);
-            opacity: 0.8;
-            margin-bottom: 20px;
-        }
-
-        .theme-toggle {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-        }
-
-        .theme-toggle:hover {
-            background: var(--secondary-color);
-        }
-
-        .app-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .app-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .upload-section, .preview-section {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-        }
-
-        .upload-area {
-            border: 2px dashed var(--border-color);
-            border-radius: var(--radius);
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            margin-bottom: 20px;
-            position: relative;
-            height: 200px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            padding: 15px;
+            background-image: radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.1) 0%, rgba(44, 44, 84, 0.5) 90%);
         }
-
-        .upload-area:hover {
-            border-color: var(--primary-color);
-        }
-
-        .upload-area.active {
-            border-color: var(--primary-color);
-            background-color: rgba(67, 97, 238, 0.05);
-        }
-
-        .upload-icon {
-            font-size: 48px;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .upload-text {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-        }
-
-        .upload-hint {
-            font-size: 0.9rem;
-            color: var(--text-color);
-            opacity: 0.7;
-        }
-
-        #fileInput {
-            display: none;
-        }
-
-        .controls {
-            margin-top: 20px;
-        }
-
-        .control-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .slider {
-            flex: 1;
-            height: 8px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: #ddd;
-            border-radius: 4px;
-            outline: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-        }
-
-        .slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-        }
-
-        .value-display {
-            width: 50px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .btn:hover {
-            background: var(--secondary-color);
-            transform: translateY(-2px);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .preview-container {
+        .container {
+            max-width: 500px;
             width: 100%;
-            height: 300px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: var(--bg-color);
-            border-radius: var(--radius);
+            margin: 0 auto;
+            background-color: rgba(34, 47, 62, 0.9);
+            border-radius: 20px;
+            box-shadow: var(--elevation-2);
             overflow: hidden;
-            margin-bottom: 20px;
-            position: relative;
-            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        #previewImage {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            border-radius: 0;
-            transition: border-radius 0.2s;
-        }
-
-        .image-info {
-            background: rgba(0, 0, 0, 0.7);
+        .header {
+            background: var(--gradient-primary);
             color: white;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            display: none;
-        }
-
-        footer {
+            padding: 25px 20px;
             text-align: center;
-            margin-top: 40px;
-            color: var(--text-color);
-            opacity: 0.7;
-            font-size: 0.9rem;
+            position: relative;
+            border-bottom: 5px solid rgba(255, 255, 255, 0.1);
         }
-
-        .drag-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(67, 97, 238, 0.1);
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .user-card {
+            background-color: var(--card-bg);
+            margin: 20px;
+            padding: 20px;
+            border-radius: 15px;
             display: flex;
-            justify-content: center;
             align-items: center;
+            box-shadow: var(--elevation-1);
+        }
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            border-radius: var(--radius);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
+            font-size: 24px;
+            color: white;
+            margin-right: 15px;
         }
-
-        .drag-overlay.active {
-            opacity: 1;
+        .user-info h3 {
+            font-size: 18px;
         }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 0 20px 20px;
+        }
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-card p {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .progress-container {
+            background-color: var(--card-bg);
+            margin: 0 20px 20px;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .progress-bar {
+            height: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .ad-status {
+            margin: 0 20px 20px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            text-align: center;
+        }
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 0 20px 20px;
+        }
+        .btn {
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #55efc4);
+            color: white;
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #ff7675);
+            color: white;
+        }
+        .btn-secondary {
+            background-color: var(--card-bg);
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+         .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .referral-section {
+            background-color: var(--card-bg);
+            margin: 0 20px 20px;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        #referral-link {
+            flex: 1;
+            padding: 14px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px 0 0 12px;
+            color: var(--text);
+        }
+        #copy-referral {
+            padding: 0 18px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 0 12px 12px 0;
+            color: white;
+            cursor: pointer;
+        }
+        .withdraw-section {
+            display: none;
+            background-color: var(--card-bg);
+            margin: 0 20px 20px;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text);
+        }
+         .daily-bonus {
+             background-color: var(--card-bg);
+             margin: 0 20px 20px;
+             padding: 20px;
+             border-radius: 15px;
+             text-align: center;
+         }
+         .bonus-btn {
+             background: linear-gradient(135deg, var(--warning), #ffeaa7);
+             color: var(--dark);
+             padding: 12px;
+             border-radius: 12px;
+             border: none;
+             cursor: pointer;
+             width: 100%;
+         }
+         .footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+         }
+         /* এখানে বাকি সব CSS থাকবে */
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <div>
-                <h1>Round Corner Image Editor</h1>
-                <p class="description">আপনার ইমেজের কর্নারগুলোকে সুন্দর গোলাকার করে নিন</p>
+        <div class="header">
+            <h1>Premium Earn Money</h1>
+            <p>Watch ads & earn real cash daily</p>
+        </div>
+        
+        <div class="user-card">
+            <div class="user-avatar" id="user-avatar">?</div>
+            <div class="user-info">
+                <h3 id="user-name">Loading...</h3>
+                <p>ID: <span id="user-id">...</span></p>
             </div>
-            <button class="theme-toggle" id="themeToggle">
-                <span id="themeIcon">🌙</span>
-                <span id="themeText">ডার্ক মোড</span>
-            </button>
-        </header>
-
-        <div class="app-container">
-            <div class="upload-section">
-                <div class="upload-area" id="uploadArea">
-                    <div class="upload-icon">📁</div>
-                    <div class="upload-text">ইমেজ আপলোড করুন</div>
-                    <div class="upload-hint">ক্লিক করুন অথবা ইমেজ ড্রাগ এন্ড ড্রপ করুন</div>
-                    <div class="drag-overlay" id="dragOverlay">ইমেজ ড্রপ করুন</div>
-                    <input type="file" id="fileInput" accept="image/*">
-                </div>
-
-                <div class="controls">
-                    <div class="control-group">
-                        <label for="cornerRadius">কর্নার রাউন্ডনেস</label>
-                        <div class="slider-container">
-                            <input type="range" min="0" max="150" value="0" class="slider" id="cornerRadius">
-                            <span class="value-display" id="radiusValue">0px</span>
-                        </div>
-                    </div>
-
-                    <div class="btn-group">
-                        <button class="btn" id="downloadBtn">
-                            <span>ডাউনলোড (PNG)</span>
-                        </button>
-                        <button class="btn btn-secondary" id="resetBtn">
-                            <span>রিসেট</span>
-                        </button>
-                    </div>
-                </div>
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Watched Ads</h3>
+                <p id="watched-ads">0</p>
             </div>
+            <div class="stat-card">
+                <h3>Earned Money</h3>
+                <p id="earned-money">0.00 <small>Taka</small></p>
+            </div>
+            <div class="stat-card">
+                <h3>Daily Streak</h3>
+                <p id="daily-streak">0 <small>Days</small></p>
+            </div>
+        </div>
+        
+        <div class="daily-bonus">
+             <h3 class="bonus-title">Daily Login Bonus</h3>
+             <p class="bonus-desc">Claim your daily bonus to earn extra money!</p>
+             <button class="bonus-btn" id="daily-bonus-btn" onclick="claimDailyBonus()">
+                 <i class="fas fa-gift"></i> Claim Bonus
+             </button>
+         </div>
 
-            <div class="preview-section">
-                <h2>প্রিভিউ</h2>
-                <div class="preview-container">
-                    <img id="previewImage" src="" alt="Preview Image">
-                    <div class="image-info" id="imageInfo"></div>
-                </div>
-                <p>আপনার ইমেজের প্রিভিউ এখানে দেখানো হবে। কর্নার রাউন্ডনেস স্লাইড করে পরিবর্তন করতে পারবেন।</p>
+        <div class="progress-container">
+            <div class="progress-header">
+                <h3 class="progress-title">Today's Progress</h3>
+                <span class="progress-count" id="ads-progress">0/10</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
             </div>
         </div>
 
-        <footer>
-            <p>© 2023 Round Corner Image Editor | তৈরি করেছেন আপনার জন্য</p>
-        </footer>
+        <div class="ad-status" id="ad-status">
+            <i class="fas fa-check-circle"></i> Ready to watch ads
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="watch-ad-btn" onclick="watchAd()">
+                <i class="fas fa-play"></i> Watch Ad (0.10 Taka)
+            </button>
+            <button class="btn btn-success" id="auto-ad-btn" onclick="startAutoAds()">
+                <i class="fas fa-robot"></i> Auto Watch Ads
+            </button>
+            <button class="btn btn-danger" id="stop-auto-btn" onclick="stopAutoAds()" disabled>
+                <i class="fas fa-stop"></i> Stop Auto Ads
+            </button>
+            <button class="btn btn-secondary" onclick="showWithdrawForm()">
+                <i class="fas fa-wallet"></i> Withdraw Money
+            </button>
+        </div>
+
+        <div class="referral-section">
+            <h3 class="section-title"><i class="fas fa-users"></i> Refer & Earn</h3>
+            <p class="referral-desc">Invite friends and earn 2 Taka for each successful referral!</p>
+            <div class="referral-link-container">
+                <input type="text" id="referral-link" readonly>
+                <button id="copy-referral" onclick="copyReferralLink()">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+        </div>
+
+        <div class="withdraw-section" id="withdraw-section">
+            <h3 class="section-title"><i class="fas fa-wallet"></i> Withdraw Money</h3>
+            <div class="form-group">
+                <label for="withdraw-amount">Amount (Taka)</label>
+                <input type="number" id="withdraw-amount" class="form-control" placeholder="Enter amount" min="10">
+            </div>
+            <div class="form-group">
+                <label for="payment-method">Payment Method</label>
+                <select id="payment-method" class="form-control">
+                    <option value="" disabled selected>Select method</option>
+                    <option value="bkash">Bkash</option>
+                    <option value="nagad">Nagad</option>
+                    <option value="rocket">Rocket</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="withdraw-phone">Phone Number</label>
+                <input type="text" id="withdraw-phone" class="form-control" placeholder="01XXXXXXXXX">
+            </div>
+            <button class="btn btn-primary" onclick="requestWithdrawal()">
+                <i class="fas fa-paper-plane"></i> Submit Request
+            </button>
+            <div id="withdraw-status" style="margin-top: 15px;"></div>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 Premium Earn Money. All rights reserved.</p>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const fileInput = document.getElementById('fileInput');
-            const uploadArea = document.getElementById('uploadArea');
-            const previewImage = document.getElementById('previewImage');
-            const cornerRadius = document.getElementById('cornerRadius');
-            const radiusValue = document.getElementById('radiusValue');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const imageInfo = document.getElementById('imageInfo');
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon = document.getElementById('themeIcon');
-            const themeText = document.getElementById('themeText');
-            const dragOverlay = document.getElementById('dragOverlay');
+        // --- Firebase Configuration ---
+        // আপনার Firebase প্রজেক্টের কনফিগারেশন এখানে যোগ করুন
+        const firebaseConfig = {
+            apiKey: "AIzaSy...YOUR_API_KEY",
+            authDomain: "your-project-id.firebaseapp.com",
+            databaseURL: "https://your-project-id.firebaseio.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project-id.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "1:YOUR:APP:ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
-            // Variables
-            let currentImage = null;
-            let currentImageName = '';
+        // --- Constants ---
+        const ADS_PER_TAKA = 10;
+        const MIN_WITHDRAW_TAKA = 50; // ন্যূনতম উইথড্র পরিমাণ
+        const POINTS_PER_AD = 0.10;
+        const DAILY_BONUS = 0.50;
 
-            // Event Listeners
-            uploadArea.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', handleFileSelect);
-            cornerRadius.addEventListener('input', updateCornerRadius);
-            downloadBtn.addEventListener('click', downloadImage);
-            resetBtn.addEventListener('click', resetAll);
-            themeToggle.addEventListener('click', toggleTheme);
+        // --- Global Variables ---
+        let userData = {
+            id: null,
+            firstName: 'Guest',
+            watchedAds: 0,
+            balance: 0.00,
+            dailyStreak: 0,
+            lastBonusClaimDate: null
+        };
+        let autoAdInterval;
+        let isAutoMode = false;
+        let isAdLoading = false;
+        const tg = window.Telegram.WebApp;
 
-            // Drag and Drop events
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('active');
-                dragOverlay.classList.add('active');
-            });
+        // --- Initialization ---
+        window.onload = function() {
+            tg.ready();
+            tg.expand(); // পুরো স্ক্রীন জুড়ে অ্যাপটি দেখাবে
 
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('active');
-                dragOverlay.classList.remove('active');
-            });
-
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('active');
-                dragOverlay.classList.remove('active');
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const tgUser = tg.initDataUnsafe.user;
+                userData.id = tgUser.id;
+                userData.firstName = tgUser.first_name;
                 
-                if (e.dataTransfer.files.length) {
-                    fileInput.files = e.dataTransfer.files;
-                    handleFileSelect({ target: fileInput });
-                }
-            });
-
-            // Functions
-            function handleFileSelect(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-
-                if (!file.type.match('image.*')) {
-                    alert('দয়া করে একটি ইমেজ ফাইল নির্বাচন করুন');
-                    return;
-                }
-
-                currentImageName = file.name.split('.')[0];
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                    currentImage = e.target.result;
-                    updateImageInfo(file);
-                };
-                reader.readAsDataURL(file);
-            }
-
-            function updateCornerRadius() {
-                const radius = cornerRadius.value;
-                previewImage.style.borderRadius = `${radius}px`;
-                radiusValue.textContent = `${radius}px`;
-            }
-
-            function downloadImage() {
-                if (!currentImage) {
-                    alert('দয়া করে প্রথমে একটি ইমেজ আপলোড করুন');
-                    return;
-                }
-
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const img = new Image();
+                document.getElementById('user-id').textContent = userData.id;
+                document.getElementById('user-name').textContent = userData.firstName;
+                document.getElementById('user-avatar').textContent = userData.firstName.charAt(0).toUpperCase();
                 
-                img.onload = function() {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    
-                    // Clear canvas with transparent background
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
-                    // Create rounded corners
-                    const radius = parseInt(cornerRadius.value);
-                    ctx.beginPath();
-                    ctx.moveTo(radius, 0);
-                    ctx.lineTo(img.width - radius, 0);
-                    ctx.quadraticCurveTo(img.width, 0, img.width, radius);
-                    ctx.lineTo(img.width, img.height - radius);
-                    ctx.quadraticCurveTo(img.width, img.height, img.width - radius, img.height);
-                    ctx.lineTo(radius, img.height);
-                    ctx.quadraticCurveTo(0, img.height, 0, img.height - radius);
-                    ctx.lineTo(0, radius);
-                    ctx.quadraticCurveTo(0, 0, radius, 0);
-                    ctx.closePath();
-                    ctx.clip();
-                    
-                    // Draw the image with transparent background
-                    ctx.drawImage(img, 0, 0);
-                    
-                    // Convert to PNG with transparent background
-                    const url = canvas.toDataURL('image/png');
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `${currentImageName}_rounded${cornerRadius.value > 0 ? `_${cornerRadius.value}px` : ''}.png`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                };
-                
-                img.src = currentImage;
+                generateReferralLink();
+                loadUserDataFromFirebase();
+            } else {
+                // টেলিগ্রামের বাইরে খোলা হলে দেখাবে
+                document.body.innerHTML = '<h2 style="text-align:center; padding-top: 50px;">Please open this app from your Telegram bot.</h2>';
             }
-
-            function resetAll() {
-                previewImage.src = '';
-                currentImage = null;
-                cornerRadius.value = 0;
-                radiusValue.textContent = '0px';
-                previewImage.style.borderRadius = '0';
-                fileInput.value = '';
-                imageInfo.style.display = 'none';
-            }
-
-            function updateImageInfo(file) {
-                const img = new Image();
-                img.onload = function() {
-                    imageInfo.textContent = `${file.name} | ${img.width}×${img.height}px | ${formatFileSize(file.size)}`;
-                    imageInfo.style.display = 'block';
-                };
-                img.src = URL.createObjectURL(file);
-            }
-
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-
-            function toggleTheme() {
-                const currentTheme = document.documentElement.getAttribute('data-theme');
-                if (currentTheme === 'dark') {
-                    document.documentElement.removeAttribute('data-theme');
-                    themeIcon.textContent = '🌙';
-                    themeText.textContent = 'ডার্ক মোড';
+        };
+        
+        // --- Data Handling (Firebase) ---
+        function loadUserDataFromFirebase() {
+            const userRef = database.ref('users/' + userData.id);
+            userRef.once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    userData.watchedAds = data.watchedAds || 0;
+                    userData.balance = data.balance || 0;
+                    userData.dailyStreak = data.dailyStreak || 0;
+                    userData.lastBonusClaimDate = data.lastBonusClaimDate || null;
                 } else {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    themeIcon.textContent = '☀️';
-                    themeText.textContent = 'লাইট মোড';
+                    // নতুন ব্যবহারকারীর জন্য ডাটাবেসে এন্ট্রি তৈরি করা
+                    saveUserDataToFirebase();
                 }
+                updateUI();
+                checkDailyBonus();
+            });
+        }
+
+        function saveUserDataToFirebase() {
+            if (!userData.id) return;
+            const userRef = database.ref('users/' + userData.id);
+            userRef.set({
+                firstName: userData.firstName,
+                watchedAds: userData.watchedAds,
+                balance: parseFloat(userData.balance.toFixed(2)),
+                dailyStreak: userData.dailyStreak,
+                lastBonusClaimDate: userData.lastBonusClaimDate
+            });
+        }
+        
+        // --- UI Update ---
+        function updateUI() {
+            document.getElementById('watched-ads').textContent = userData.watchedAds;
+            document.getElementById('earned-money').textContent = `${userData.balance.toFixed(2)} Taka`;
+            document.getElementById('daily-streak').textContent = `${userData.dailyStreak} Days`;
+            
+            const adsInCurrentCycle = userData.watchedAds % ADS_PER_TAKA;
+            const progressPercent = (adsInCurrentCycle / ADS_PER_TAKA) * 100;
+            document.getElementById('progress-fill').style.width = `${progressPercent}%`;
+            document.getElementById('ads-progress').textContent = `${adsInCurrentCycle}/${ADS_PER_TAKA}`;
+        }
+
+        // --- Core Functions ---
+        function watchAd() {
+            if (isAdLoading) return;
+            if (typeof window.show_9472256 !== 'function') {
+                showAlert('Ad system is not ready yet.', 'error');
+                return;
             }
 
-            // Initialize
-            resetAll();
-        });
+            isAdLoading = true;
+            document.getElementById('watch-ad-btn').disabled = true;
+            document.getElementById('ad-status').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading ad...';
+            
+            try {
+                window.show_9472256().then(() => {
+                    userData.watchedAds++;
+                    userData.balance += POINTS_PER_AD;
+                    
+                    saveUserDataToFirebase();
+                    updateUI();
+                    document.getElementById('ad-status').innerHTML = '<i class="fas fa-check-circle"></i> Ad watched successfully!';
+                    
+                    if (isAutoMode) {
+                        setTimeout(() => {
+                            isAdLoading = false;
+                            document.getElementById('watch-ad-btn').disabled = false;
+                            watchAd();
+                        }, 5000); // 5 সেকেন্ড পর পর অটো অ্যাড
+                    } else {
+                        isAdLoading = false;
+                        document.getElementById('watch-ad-btn').disabled = false;
+                    }
+                }).catch(error => {
+                    handleAdError(error);
+                });
+            } catch (error) {
+                handleAdError(error);
+            }
+        }
+
+        function handleAdError(error) {
+            console.error('Ad Error:', error);
+            document.getElementById('ad-status').innerHTML = '<i class="fas fa-times-circle"></i> Failed to show ad.';
+            isAdLoading = false;
+            document.getElementById('watch-ad-btn').disabled = false;
+            if (isAutoMode) {
+                stopAutoAds();
+                showAlert('Auto-watch stopped due to an ad error.', 'error');
+            }
+        }
+
+        function startAutoAds() {
+            isAutoMode = true;
+            document.getElementById('auto-ad-btn').disabled = true;
+            document.getElementById('stop-auto-btn').disabled = false;
+            document.getElementById('ad-status').innerHTML = '<i class="fas fa-robot"></i> Auto ads mode activated';
+            watchAd();
+        }
+
+        function stopAutoAds() {
+            isAutoMode = false;
+            clearTimeout(autoAdInterval);
+            document.getElementById('auto-ad-btn').disabled = false;
+            document.getElementById('stop-auto-btn').disabled = true;
+            document.getElementById('ad-status').innerHTML = '<i class="fas fa-check-circle"></i> Auto ads mode stopped';
+        }
+
+        function checkDailyBonus() {
+            const today = new Date().toDateString();
+            const bonusBtn = document.getElementById('daily-bonus-btn');
+            if (userData.lastBonusClaimDate === today) {
+                bonusBtn.disabled = true;
+                bonusBtn.innerHTML = '<i class="fas fa-check"></i> Already Claimed';
+            } else {
+                bonusBtn.disabled = false;
+                bonusBtn.innerHTML = `<i class="fas fa-gift"></i> Claim ${DAILY_BONUS.toFixed(2)} Taka`;
+            }
+        }
+
+        function claimDailyBonus() {
+            const today = new Date().toDateString();
+            if (userData.lastBonusClaimDate === today) {
+                showAlert('You have already claimed your bonus today!', 'error');
+                return;
+            }
+
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            if (userData.lastBonusClaimDate === yesterday.toDateString()) {
+                userData.dailyStreak++;
+            } else {
+                userData.dailyStreak = 1; // স্ট্রিক রিসেট
+            }
+            
+            userData.balance += DAILY_BONUS;
+            userData.lastBonusClaimDate = today;
+            
+            saveUserDataToFirebase();
+            updateUI();
+            checkDailyBonus();
+            showAlert(`Bonus of ${DAILY_BONUS.toFixed(2)} Taka claimed! Your new streak is ${userData.dailyStreak}.`, 'success');
+        }
+
+        // --- Withdrawal ---
+        function showWithdrawForm() {
+            document.getElementById('withdraw-section').style.display = 'block';
+        }
+
+        function requestWithdrawal() {
+            const amount = parseFloat(document.getElementById('withdraw-amount').value);
+            const method = document.getElementById('payment-method').value;
+            const phone = document.getElementById('withdraw-phone').value;
+            const statusDiv = document.getElementById('withdraw-status');
+
+            if (!amount || amount < MIN_WITHDRAW_TAKA) {
+                statusDiv.innerHTML = `Minimum withdrawal is ${MIN_WITHDRAW_TAKA} Taka.`;
+                return;
+            }
+            if (amount > userData.balance) {
+                statusDiv.innerHTML = `Insufficient balance.`;
+                return;
+            }
+            if (!method) {
+                statusDiv.innerHTML = `Please select a payment method.`;
+                return;
+            }
+            if (!phone || !/^01[3-9][0-9]{8}$/.test(phone)) {
+                statusDiv.innerHTML = `Please enter a valid Bangladeshi phone number.`;
+                return;
+            }
+
+            // Firebase Transaction for safety
+            const userBalanceRef = database.ref('users/' + userData.id + '/balance');
+            userBalanceRef.transaction((currentBalance) => {
+                if (currentBalance >= amount) {
+                    return currentBalance - amount;
+                }
+                return; // Abort transaction
+            }, (error, committed, snapshot) => {
+                if (error) {
+                    statusDiv.innerHTML = 'Transaction failed! Please try again.';
+                    console.error('Transaction Error:', error);
+                } else if (committed) {
+                    // ব্যালেন্স সফলভাবে কাটা হয়েছে, এখন রিকোয়েস্ট যোগ করুন
+                    const newRequestRef = database.ref('withdrawRequests').push();
+                    newRequestRef.set({
+                        userId: userData.id,
+                        userName: userData.firstName,
+                        amount: amount,
+                        method: method,
+                        phone: phone,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP,
+                        status: 'pending' // pending, paid, rejected
+                    });
+
+                    // Update local data
+                    userData.balance = snapshot.val();
+                    updateUI();
+
+                    statusDiv.innerHTML = 'Withdrawal request submitted successfully!';
+                    setTimeout(() => {
+                        document.getElementById('withdraw-section').style.display = 'none';
+                        statusDiv.innerHTML = '';
+                    }, 3000);
+                } else {
+                    statusDiv.innerHTML = 'Insufficient balance for this withdrawal.';
+                }
+            });
+        }
+
+        // --- Referral ---
+        function generateReferralLink() {
+            // টেলিগ্রাম বটের লিঙ্ক ব্যবহার করা ভালো
+            const botUsername = "YOUR_BOT_USERNAME"; // আপনার বটের ইউজারনেম দিন (e.g., MyAwesomeBot)
+            const referralLink = `https://t.me/${botUsername}?start=${userData.id}`;
+            document.getElementById('referral-link').value = referralLink;
+        }
+
+        function copyReferralLink() {
+            const linkInput = document.getElementById('referral-link');
+            linkInput.select();
+            document.execCommand('copy');
+            showAlert('Referral link copied!', 'success');
+        }
+
+        // --- Utility ---
+        function showAlert(message, type = 'info') {
+            tg.showPopup({
+                title: type.charAt(0).toUpperCase() + type.slice(1),
+                message: message,
+                buttons: [{ type: 'ok' }]
+            });
+        }
     </script>
 </body>
 </html>
