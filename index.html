@@ -1,20 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Premium Earn Money - Watch Ads</title>
-    
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
+    <!-- Monetag SDK -->
     <script src='//libtl.com/sdk.js' data-zone='9472256' data-sdk='show_9472256'></script>
-    
+    <!-- Telegram WebApp Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* আপনার দেওয়া সম্পূর্ণ CSS কোড এখানে থাকবে */
-        /* কোনো পরিবর্তন করা হয়নি */
         :root {
             --primary: #6c5ce7;
             --secondary: #a29bfe;
@@ -31,12 +28,14 @@
             --elevation-2: 0 10px 20px rgba(0, 0, 0, 0.2);
             --gradient-primary: linear-gradient(135deg, var(--primary), var(--secondary));
         }
+        
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
         }
+        
         body {
             background-color: var(--dark);
             color: var(--text);
@@ -47,598 +46,131 @@
             padding: 15px;
             background-image: radial-gradient(circle at 10% 20%, rgba(108, 92, 231, 0.1) 0%, rgba(44, 44, 84, 0.5) 90%);
         }
-        .container {
-            max-width: 500px;
-            width: 100%;
-            margin: 0 auto;
-            background-color: rgba(34, 47, 62, 0.9);
-            border-radius: 20px;
-            box-shadow: var(--elevation-2);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .header {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 25px 20px;
-            text-align: center;
-            position: relative;
-            border-bottom: 5px solid rgba(255, 255, 255, 0.1);
-        }
-        .header h1 {
-            font-size: 26px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        .user-card {
-            background-color: var(--card-bg);
-            margin: 20px;
-            padding: 20px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            box-shadow: var(--elevation-1);
-        }
-        .user-avatar {
-            width: 60px;
-            height: 60px;
-            background: var(--gradient-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 24px;
-            color: white;
-            margin-right: 15px;
-        }
-        .user-info h3 {
-            font-size: 18px;
-        }
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 0 20px 20px;
-        }
-        .stat-card {
-            background-color: var(--card-bg);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        .stat-card p {
-            font-size: 22px;
-            font-weight: 700;
-        }
-        .progress-container {
-            background-color: var(--card-bg);
-            margin: 0 20px 20px;
-            padding: 20px;
-            border-radius: 15px;
-        }
-        .progress-bar {
-            height: 12px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: var(--gradient-primary);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        .ad-status {
-            margin: 0 20px 20px;
-            padding: 15px;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            text-align: center;
-        }
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin: 0 20px 20px;
-        }
-        .btn {
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .btn-primary {
-            background: var(--gradient-primary);
-            color: white;
-        }
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #55efc4);
-            color: white;
-        }
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger), #ff7675);
-            color: white;
-        }
-        .btn-secondary {
-            background-color: var(--card-bg);
-            color: var(--text);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-         .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-        .referral-section {
-            background-color: var(--card-bg);
-            margin: 0 20px 20px;
-            padding: 20px;
-            border-radius: 15px;
-        }
-        #referral-link {
-            flex: 1;
-            padding: 14px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px 0 0 12px;
-            color: var(--text);
-        }
-        #copy-referral {
-            padding: 0 18px;
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: 0 12px 12px 0;
-            color: white;
-            cursor: pointer;
-        }
-        .withdraw-section {
-            display: none;
-            background-color: var(--card-bg);
-            margin: 0 20px 20px;
-            padding: 20px;
-            border-radius: 15px;
-        }
-        .form-control {
-            width: 100%;
-            padding: 14px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: var(--text);
-        }
-         .daily-bonus {
-             background-color: var(--card-bg);
-             margin: 0 20px 20px;
-             padding: 20px;
-             border-radius: 15px;
-             text-align: center;
-         }
-         .bonus-btn {
-             background: linear-gradient(135deg, var(--warning), #ffeaa7);
-             color: var(--dark);
-             padding: 12px;
-             border-radius: 12px;
-             border: none;
-             cursor: pointer;
-             width: 100%;
-         }
-         .footer {
-            text-align: center;
-            margin-top: auto;
-            padding: 20px;
-            font-size: 12px;
-            color: var(--text-muted);
-         }
-         /* এখানে বাকি সব CSS থাকবে */
+        
+        /* Your existing CSS code here */
     </style>
+    <!-- Font Awesome and Animate.css links -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Premium Earn Money</h1>
-            <p>Watch ads & earn real cash daily</p>
-        </div>
-        
+    <div class="container animate__animated animate__fadeIn">
+        <!-- Your existing header, user-card, stats, etc. HTML here -->
         <div class="user-card">
-            <div class="user-avatar" id="user-avatar">?</div>
+            <div class="user-avatar" id="user-avatar">U</div>
             <div class="user-info">
                 <h3 id="user-name">Loading...</h3>
-                <p>ID: <span id="user-id">...</span></p>
+                <p>ID: <span id="user-id">Loading...</span></p>
+                <div class="user-level">
+                    <i class="fas fa-crown"></i> Level 1
+                </div>
             </div>
         </div>
-        
-        <div class="stats-container">
-            <div class="stat-card">
-                <h3>Watched Ads</h3>
-                <p id="watched-ads">0</p>
-            </div>
-            <div class="stat-card">
-                <h3>Earned Money</h3>
-                <p id="earned-money">0.00 <small>Taka</small></p>
-            </div>
-            <div class="stat-card">
-                <h3>Daily Streak</h3>
-                <p id="daily-streak">0 <small>Days</small></p>
-            </div>
-        </div>
-        
-        <div class="daily-bonus">
-             <h3 class="bonus-title">Daily Login Bonus</h3>
-             <p class="bonus-desc">Claim your daily bonus to earn extra money!</p>
-             <button class="bonus-btn" id="daily-bonus-btn" onclick="claimDailyBonus()">
-                 <i class="fas fa-gift"></i> Claim Bonus
-             </button>
-         </div>
-
-        <div class="progress-container">
-            <div class="progress-header">
-                <h3 class="progress-title">Today's Progress</h3>
-                <span class="progress-count" id="ads-progress">0/10</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill"></div>
-            </div>
-        </div>
-
-        <div class="ad-status" id="ad-status">
-            <i class="fas fa-check-circle"></i> Ready to watch ads
-        </div>
-        
-        <div class="action-buttons">
-            <button class="btn btn-primary" id="watch-ad-btn" onclick="watchAd()">
-                <i class="fas fa-play"></i> Watch Ad (0.10 Taka)
-            </button>
-            <button class="btn btn-success" id="auto-ad-btn" onclick="startAutoAds()">
-                <i class="fas fa-robot"></i> Auto Watch Ads
-            </button>
-            <button class="btn btn-danger" id="stop-auto-btn" onclick="stopAutoAds()" disabled>
-                <i class="fas fa-stop"></i> Stop Auto Ads
-            </button>
-            <button class="btn btn-secondary" onclick="showWithdrawForm()">
-                <i class="fas fa-wallet"></i> Withdraw Money
-            </button>
-        </div>
-
-        <div class="referral-section">
-            <h3 class="section-title"><i class="fas fa-users"></i> Refer & Earn</h3>
-            <p class="referral-desc">Invite friends and earn 2 Taka for each successful referral!</p>
-            <div class="referral-link-container">
-                <input type="text" id="referral-link" readonly>
-                <button id="copy-referral" onclick="copyReferralLink()">
-                    <i class="fas fa-copy"></i> Copy
-                </button>
-            </div>
-        </div>
-
-        <div class="withdraw-section" id="withdraw-section">
-            <h3 class="section-title"><i class="fas fa-wallet"></i> Withdraw Money</h3>
-            <div class="form-group">
-                <label for="withdraw-amount">Amount (Taka)</label>
-                <input type="number" id="withdraw-amount" class="form-control" placeholder="Enter amount" min="10">
-            </div>
-            <div class="form-group">
-                <label for="payment-method">Payment Method</label>
-                <select id="payment-method" class="form-control">
-                    <option value="" disabled selected>Select method</option>
-                    <option value="bkash">Bkash</option>
-                    <option value="nagad">Nagad</option>
-                    <option value="rocket">Rocket</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="withdraw-phone">Phone Number</label>
-                <input type="text" id="withdraw-phone" class="form-control" placeholder="01XXXXXXXXX">
-            </div>
-            <button class="btn btn-primary" onclick="requestWithdrawal()">
-                <i class="fas fa-paper-plane"></i> Submit Request
-            </button>
-            <div id="withdraw-status" style="margin-top: 15px;"></div>
-        </div>
-
-        <div class="footer">
-            <p>© 2025 Premium Earn Money. All rights reserved.</p>
-        </div>
+        <!-- ... all other sections ... -->
     </div>
 
     <script>
         // --- Firebase Configuration ---
-        // আপনার Firebase প্রজেক্টের কনফিগারেশন এখানে যোগ করুন
         const firebaseConfig = {
-            apiKey: "AIzaSy...YOUR_API_KEY",
-            authDomain: "your-project-id.firebaseapp.com",
-            databaseURL: "https://your-project-id.firebaseio.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project-id.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "1:YOUR:APP:ID"
+            apiKey: "YOUR_FIREBASE_API_KEY",
+            authDomain: "YOUR_FIREBASE_AUTH_DOMAIN",
+            databaseURL: "YOUR_FIREBASE_DATABASE_URL",
+            projectId: "YOUR_FIREBASE_PROJECT_ID",
+            storageBucket: "YOUR_FIREBASE_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_FIREBASE_MESSAGING_SENDER_ID",
+            appId: "YOUR_FIREBASE_APP_ID"
         };
+
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // --- Constants ---
-        const ADS_PER_TAKA = 10;
-        const MIN_WITHDRAW_TAKA = 50; // ন্যূনতম উইথড্র পরিমাণ
-        const POINTS_PER_AD = 0.10;
-        const DAILY_BONUS = 0.50;
+        // --- Your existing constants and variables ---
+        let userId = null;
+        let userName = 'Premium User';
 
-        // --- Global Variables ---
-        let userData = {
-            id: null,
-            firstName: 'Guest',
-            watchedAds: 0,
-            balance: 0.00,
-            dailyStreak: 0,
-            lastBonusClaimDate: null
-        };
-        let autoAdInterval;
-        let isAutoMode = false;
-        let isAdLoading = false;
-        const tg = window.Telegram.WebApp;
-
-        // --- Initialization ---
-        window.onload = function() {
-            tg.ready();
-            tg.expand(); // পুরো স্ক্রীন জুড়ে অ্যাপটি দেখাবে
+        // --- Initialize the App ---
+        function initApp() {
+            window.Telegram.WebApp.ready();
+            const tg = window.Telegram.WebApp;
 
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                const tgUser = tg.initDataUnsafe.user;
-                userData.id = tgUser.id;
-                userData.firstName = tgUser.first_name;
-                
-                document.getElementById('user-id').textContent = userData.id;
-                document.getElementById('user-name').textContent = userData.firstName;
-                document.getElementById('user-avatar').textContent = userData.firstName.charAt(0).toUpperCase();
-                
-                generateReferralLink();
-                loadUserDataFromFirebase();
+                userId = tg.initDataUnsafe.user.id.toString();
+                userName = tg.initDataUnsafe.user.first_name || 'Premium User';
+                document.getElementById('user-id').textContent = userId;
+                document.getElementById('user-name').textContent = userName;
+                document.getElementById('user-avatar').textContent = userName.charAt(0).toUpperCase();
             } else {
-                // টেলিগ্রামের বাইরে খোলা হলে দেখাবে
-                document.body.innerHTML = '<h2 style="text-align:center; padding-top: 50px;">Please open this app from your Telegram bot.</h2>';
+                // Fallback for testing outside Telegram
+                userId = localStorage.getItem('userId') || Math.floor(100000 + Math.random() * 900000).toString();
+                localStorage.setItem('userId', userId);
+                document.getElementById('user-id').textContent = userId;
+                document.getElementById('user-name').textContent = 'Premium User';
+                document.getElementById('user-avatar').textContent = 'U';
             }
-        };
-        
-        // --- Data Handling (Firebase) ---
-        function loadUserDataFromFirebase() {
-            const userRef = database.ref('users/' + userData.id);
-            userRef.once('value', (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    userData.watchedAds = data.watchedAds || 0;
-                    userData.balance = data.balance || 0;
-                    userData.dailyStreak = data.dailyStreak || 0;
-                    userData.lastBonusClaimDate = data.lastBonusClaimDate || null;
-                } else {
-                    // নতুন ব্যবহারকারীর জন্য ডাটাবেসে এন্ট্রি তৈরি করা
-                    saveUserDataToFirebase();
+
+            loadUserData();
+            checkAdReady();
+            generateReferralLink();
+            checkDailyBonus();
+        }
+
+        // --- Load user data from Firebase ---
+        function loadUserData() {
+            if (!userId) return;
+            database.ref('users/'' + userId).on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    watchedAdsCount = data.watchedAdsCount || 0;
+                    earnedPoints = data.earnedPoints || 0;
+                    // ... load other data ...
                 }
                 updateUI();
-                checkDailyBonus();
             });
         }
 
-        function saveUserDataToFirebase() {
-            if (!userData.id) return;
-            const userRef = database.ref('users/' + userData.id);
-            userRef.set({
-                firstName: userData.firstName,
-                watchedAds: userData.watchedAds,
-                balance: parseFloat(userData.balance.toFixed(2)),
-                dailyStreak: userData.dailyStreak,
-                lastBonusClaimDate: userData.lastBonusClaimDate
+        // --- Save user data to Firebase ---
+        function saveUserData() {
+            if (!userId) return;
+            database.ref('users/' + userId).set({
+                watchedAdsCount: watchedAdsCount,
+                earnedPoints: earnedPoints.toFixed(2),
+                // ... save other data ...
+                lastUpdate: new Date().toISOString()
             });
         }
-        
-        // --- UI Update ---
-        function updateUI() {
-            document.getElementById('watched-ads').textContent = userData.watchedAds;
-            document.getElementById('earned-money').textContent = `${userData.balance.toFixed(2)} Taka`;
-            document.getElementById('daily-streak').textContent = `${userData.dailyStreak} Days`;
-            
-            const adsInCurrentCycle = userData.watchedAds % ADS_PER_TAKA;
-            const progressPercent = (adsInCurrentCycle / ADS_PER_TAKA) * 100;
-            document.getElementById('progress-fill').style.width = `${progressPercent}%`;
-            document.getElementById('ads-progress').textContent = `${adsInCurrentCycle}/${ADS_PER_TAKA}`;
-        }
 
-        // --- Core Functions ---
-        function watchAd() {
-            if (isAdLoading) return;
-            if (typeof window.show_9472256 !== 'function') {
-                showAlert('Ad system is not ready yet.', 'error');
-                return;
-            }
+        // --- Handle withdrawal request ---
+        function withdrawPoints() {
+            // ... your existing validation logic ...
 
-            isAdLoading = true;
-            document.getElementById('watch-ad-btn').disabled = true;
-            document.getElementById('ad-status').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading ad...';
-            
-            try {
-                window.show_9472256().then(() => {
-                    userData.watchedAds++;
-                    userData.balance += POINTS_PER_AD;
-                    
-                    saveUserDataToFirebase();
-                    updateUI();
-                    document.getElementById('ad-status').innerHTML = '<i class="fas fa-check-circle"></i> Ad watched successfully!';
-                    
-                    if (isAutoMode) {
-                        setTimeout(() => {
-                            isAdLoading = false;
-                            document.getElementById('watch-ad-btn').disabled = false;
-                            watchAd();
-                        }, 5000); // 5 সেকেন্ড পর পর অটো অ্যাড
-                    } else {
-                        isAdLoading = false;
-                        document.getElementById('watch-ad-btn').disabled = false;
-                    }
-                }).catch(error => {
-                    handleAdError(error);
+            const requestData = {
+                userId: userId,
+                userName: userName,
+                amount: amount,
+                paymentMethod: paymentMethod,
+                phoneNumber: phoneNumber,
+                status: 'pending',
+                timestamp: new Date().toISOString()
+            };
+
+            const newWithdrawalRef = database.ref('withdrawals').push();
+            newWithdrawalRef.set(requestData)
+                .then(() => {
+                    withdrawStatus.textContent = 'আপনার অনুরোধটি সফলভাবে জমা দেওয়া হয়েছে!';
+                    withdrawStatus.className = 'success-message';
+                    // ... deduct points and update UI ...
+                })
+                .catch(error => {
+                    withdrawStatus.textContent = 'ত্রুটি! অনুগ্রহ করে আবার চেষ্টা করুন।';
+                    withdrawStatus.className = 'error-message';
                 });
-            } catch (error) {
-                handleAdError(error);
-            }
         }
 
-        function handleAdError(error) {
-            console.error('Ad Error:', error);
-            document.getElementById('ad-status').innerHTML = '<i class="fas fa-times-circle"></i> Failed to show ad.';
-            isAdLoading = false;
-            document.getElementById('watch-ad-btn').disabled = false;
-            if (isAutoMode) {
-                stopAutoAds();
-                showAlert('Auto-watch stopped due to an ad error.', 'error');
-            }
-        }
+        // --- All your other JavaScript functions (watchAd, updateUI, etc.) ---
 
-        function startAutoAds() {
-            isAutoMode = true;
-            document.getElementById('auto-ad-btn').disabled = true;
-            document.getElementById('stop-auto-btn').disabled = false;
-            document.getElementById('ad-status').innerHTML = '<i class="fas fa-robot"></i> Auto ads mode activated';
-            watchAd();
-        }
-
-        function stopAutoAds() {
-            isAutoMode = false;
-            clearTimeout(autoAdInterval);
-            document.getElementById('auto-ad-btn').disabled = false;
-            document.getElementById('stop-auto-btn').disabled = true;
-            document.getElementById('ad-status').innerHTML = '<i class="fas fa-check-circle"></i> Auto ads mode stopped';
-        }
-
-        function checkDailyBonus() {
-            const today = new Date().toDateString();
-            const bonusBtn = document.getElementById('daily-bonus-btn');
-            if (userData.lastBonusClaimDate === today) {
-                bonusBtn.disabled = true;
-                bonusBtn.innerHTML = '<i class="fas fa-check"></i> Already Claimed';
-            } else {
-                bonusBtn.disabled = false;
-                bonusBtn.innerHTML = `<i class="fas fa-gift"></i> Claim ${DAILY_BONUS.toFixed(2)} Taka`;
-            }
-        }
-
-        function claimDailyBonus() {
-            const today = new Date().toDateString();
-            if (userData.lastBonusClaimDate === today) {
-                showAlert('You have already claimed your bonus today!', 'error');
-                return;
-            }
-
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-
-            if (userData.lastBonusClaimDate === yesterday.toDateString()) {
-                userData.dailyStreak++;
-            } else {
-                userData.dailyStreak = 1; // স্ট্রিক রিসেট
-            }
-            
-            userData.balance += DAILY_BONUS;
-            userData.lastBonusClaimDate = today;
-            
-            saveUserDataToFirebase();
-            updateUI();
-            checkDailyBonus();
-            showAlert(`Bonus of ${DAILY_BONUS.toFixed(2)} Taka claimed! Your new streak is ${userData.dailyStreak}.`, 'success');
-        }
-
-        // --- Withdrawal ---
-        function showWithdrawForm() {
-            document.getElementById('withdraw-section').style.display = 'block';
-        }
-
-        function requestWithdrawal() {
-            const amount = parseFloat(document.getElementById('withdraw-amount').value);
-            const method = document.getElementById('payment-method').value;
-            const phone = document.getElementById('withdraw-phone').value;
-            const statusDiv = document.getElementById('withdraw-status');
-
-            if (!amount || amount < MIN_WITHDRAW_TAKA) {
-                statusDiv.innerHTML = `Minimum withdrawal is ${MIN_WITHDRAW_TAKA} Taka.`;
-                return;
-            }
-            if (amount > userData.balance) {
-                statusDiv.innerHTML = `Insufficient balance.`;
-                return;
-            }
-            if (!method) {
-                statusDiv.innerHTML = `Please select a payment method.`;
-                return;
-            }
-            if (!phone || !/^01[3-9][0-9]{8}$/.test(phone)) {
-                statusDiv.innerHTML = `Please enter a valid Bangladeshi phone number.`;
-                return;
-            }
-
-            // Firebase Transaction for safety
-            const userBalanceRef = database.ref('users/' + userData.id + '/balance');
-            userBalanceRef.transaction((currentBalance) => {
-                if (currentBalance >= amount) {
-                    return currentBalance - amount;
-                }
-                return; // Abort transaction
-            }, (error, committed, snapshot) => {
-                if (error) {
-                    statusDiv.innerHTML = 'Transaction failed! Please try again.';
-                    console.error('Transaction Error:', error);
-                } else if (committed) {
-                    // ব্যালেন্স সফলভাবে কাটা হয়েছে, এখন রিকোয়েস্ট যোগ করুন
-                    const newRequestRef = database.ref('withdrawRequests').push();
-                    newRequestRef.set({
-                        userId: userData.id,
-                        userName: userData.firstName,
-                        amount: amount,
-                        method: method,
-                        phone: phone,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP,
-                        status: 'pending' // pending, paid, rejected
-                    });
-
-                    // Update local data
-                    userData.balance = snapshot.val();
-                    updateUI();
-
-                    statusDiv.innerHTML = 'Withdrawal request submitted successfully!';
-                    setTimeout(() => {
-                        document.getElementById('withdraw-section').style.display = 'none';
-                        statusDiv.innerHTML = '';
-                    }, 3000);
-                } else {
-                    statusDiv.innerHTML = 'Insufficient balance for this withdrawal.';
-                }
-            });
-        }
-
-        // --- Referral ---
-        function generateReferralLink() {
-            // টেলিগ্রাম বটের লিঙ্ক ব্যবহার করা ভালো
-            const botUsername = "YOUR_BOT_USERNAME"; // আপনার বটের ইউজারনেম দিন (e.g., MyAwesomeBot)
-            const referralLink = `https://t.me/${botUsername}?start=${userData.id}`;
-            document.getElementById('referral-link').value = referralLink;
-        }
-
-        function copyReferralLink() {
-            const linkInput = document.getElementById('referral-link');
-            linkInput.select();
-            document.execCommand('copy');
-            showAlert('Referral link copied!', 'success');
-        }
-
-        // --- Utility ---
-        function showAlert(message, type = 'info') {
-            tg.showPopup({
-                title: type.charAt(0).toUpperCase() + type.slice(1),
-                message: message,
-                buttons: [{ type: 'ok' }]
-            });
-        }
+        // Initialize the app on page load
+        window.onload = initApp;
     </script>
 </body>
 </html>
